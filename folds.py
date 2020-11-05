@@ -154,18 +154,18 @@ if __name__ == "__main__":
 
     # fb
     generate_folds(
-        os.path.join(common.DATASET_DIST, 'test'),
+        os.path.join(common.EXPTS_INT, 'test'),
         '.fb.npz',
-        output_dir='build/folds',
+        output_dir=os.path.join(common.EXPTS_INT, 'folds'),
         group='test',
         input_shape=(WIDTH, FB_HEIGHT),
         normalize=normalize_fb,
         output_shape=(FB_HEIGHT, WIDTH, COLOR_DEPTH)
     )
     generate_folds(
-        os.path.join(common.DATASET_DIST, 'train'),
+        os.path.join(common.EXPTS_INT, 'train'),
         '.fb.npz',
-        output_dir='build/folds',
+        output_dir=os.path.join(common.EXPTS_INT, 'folds'),
         group='train',
         input_shape=(WIDTH, FB_HEIGHT),
         normalize=normalize_fb,

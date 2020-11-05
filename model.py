@@ -143,6 +143,7 @@ def build_model(input_shape):
 if __name__ == "__main__":
     import argparse
 
+    modelFileName = os.path.join(common.EXPTS_INT, 'model/model.h5')
     parser = argparse.ArgumentParser(description='Train model.')
     parser.add_argument(
         '--test',
@@ -156,19 +157,19 @@ if __name__ == "__main__":
     input_shape = (FB_HEIGHT, WIDTH, COLOR_DEPTH)
 
     if args.test:
-        model = load_model('model.h5')
+        model = load_model(modelFileName)
 
         input_shape = (FB_HEIGHT, WIDTH, COLOR_DEPTH)
         label_binarizer, clazzes = common.build_label_binarizer()
 
         test_labels, test_features, test_metadata = common.load_data(
-            label_binarizer, 'build/folds', 'test', [1], input_shape)
+            label_binarizer, os.path.join(common.EXPTS_INT, 'folds'), 'test', [1], input_shape)
 
         common.test(test_labels, test_features, test_metadata, model, clazzes)
     else:
         accuracies = []
         generator = common.train_generator(
-            14, 'build/folds', input_shape, max_iterations=1)
+            14, os.path.join(common.EXPTS_INT, 'folds'), input_shape, max_iterations=1)
 
         first = True
         for (train_labels,
@@ -186,7 +187,7 @@ if __name__ == "__main__":
                 first = False
 
             checkpoint = ModelCheckpoint(
-                'model.h5',
+                modelFileName,
                 monitor='val_loss',
                 verbose=0,
                 save_best_only=True,
@@ -208,7 +209,7 @@ if __name__ == "__main__":
                 validation_data=(test_features, test_labels),
                 batch_size=8)
 
-            model = load_model('model.h5')
+            model = load_model(modelFileName)
 
             scores = model.evaluate(test_features, test_labels, verbose=0)
             accuracy = scores[1]

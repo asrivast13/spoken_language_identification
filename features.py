@@ -8,7 +8,6 @@ import soundfile as sf
 from constants import *
 import common
 
-
 # source1: https://bit.ly/2GSsEgw
 # source2: https://bit.ly/2sWxHIc
 def generate_fb_and_mfcc(signal, sample_rate):
@@ -120,20 +119,24 @@ def generate_fb_and_mfcc(signal, sample_rate):
     return filter_banks
 
 
-def process_audio(input_dir, debug=False):
+def process_audio(input_dir, output_dir=".", debug=False):
     files = []
 
     extensions = ['*.flac']
     for extension in extensions:
         files.extend(glob.glob(os.path.join(input_dir, extension)))
 
+    totalfiles = len(files)
+    #print (input_dir)
+    #print (len(files))
+    fnum = 1
+    start = time.time()
+    
     for file in files:
         if debug:
-            file = ('build/test/'
-                    'de_f_63f5b79c76cf5a1a4bbd1c40f54b166e.fragment1.flac')
-            start = time.time()
+            file = os.path.join(input_dir, 'de_f_63f5b79c76cf5a1a4bbd1c40f54b166e.fragment1.flac')
 
-        print(file)
+        #print(file)
 
         signal, sample_rate = sf.read(file)
         assert len(signal) > 0
@@ -146,19 +149,56 @@ def process_audio(input_dir, debug=False):
         assert fb.shape == (WIDTH, FB_HEIGHT)
 
         # .npz extension is added automatically
-        file_without_ext = os.path.splitext(file)[0]
-
-        np.savez_compressed(file_without_ext + '.fb', data=fb)
-
+        file_without_ext = os.path.splitext(os.path.basename(file))[0]
+        output_file = os.path.join(output_dir, file_without_ext + '.fb')
+        
+        np.savez_compressed(output_file, data=fb)
+        print("[{} of {}] Finished writing features to: {}".format(fnum, totalfiles, output_file))
+        fnum += 1
+        
         if debug:
             end = time.time()
             print("It took [s]: ", end - start)
 
             # data is casted to uint8, i.e. (0, 255)
             import imageio
+            
+            #info = np.finfo(fb.dtype) # Get the information of the incoming image type
+            #data = fb.astype(np.float32) / info.max # normalize the data to 0 - 1
+            #data = 255 * data # Now scale by 255
+            #img = data.astype(np.uint8)
+            #imageio.imwrite('fb_image.png', img)
+            # fmin = np.min(fb)
+            # fmax = np.max(fb)
+            # fb = fb - fmin
+            # fb = fb / fmax
+            # fb = 255 * fb
+            # fb = fb.astype(np.uint8)
+                        
             imageio.imwrite('fb_image.png', fb)
 
-            exit(0)
+            # Printing type of arr object 
+            print("Array is of type: ", type(fb)) 
+  
+            # Printing array dimensions (axes) 
+            print("No. of dimensions: ", fb.ndim) 
+  
+            # Printing shape of array 
+            print("Shape of array: ", fb.shape) 
+  
+            # Printing size (total number of elements) of array 
+            print("Size of array: ", fb.size) 
+            
+            # Printing max of array 
+            print("Range of array: [{},  {}] ".format(np.min(fb), np.max(fb))) 
+            
+            # Printing type of elements in array 
+            print("Array stores elements of type: ", fb.dtype) 
+            #exit(0)
+            break
+
+    end = time.time()
+    print("Entire feature extraction on {} files in {} took: {:.2f} secs".format(totalfiles, input_dir, (end - start)))
 
 
 if __name__ == "__main__":
@@ -172,7 +212,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.debug:
-        process_audio(os.path.join(common.DATASET_DIST, 'train'), debug=True)
+        process_audio(os.path.join(common.DATASET_DIST, 'test'), os.path.join(common.EXPTS_INT, 'debug'), debug=True)
     else:
-        process_audio(os.path.join(common.DATASET_DIST, 'test'))
-        process_audio(os.path.join(common.DATASET_DIST, 'train'))
+        process_audio(os.path.join(common.DATASET_DIST, 'test'), os.path.join(common.EXPTS_INT, 'test'))
+        process_audio(os.path.join(common.DATASET_DIST, 'train'), os.path.join(common.EXPTS_INT, 'train'))
