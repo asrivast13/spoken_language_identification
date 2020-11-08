@@ -6,6 +6,8 @@ from sklearn.utils import shuffle
 import time
 import speechpy
 
+import kaldiio
+
 from constants import *
 import common
 
@@ -61,14 +63,16 @@ def generate_fold(
     # append data to a file array
     # append metadata to an array
     for index, fold_file in enumerate(fold_files):
-        print(fold_file)
+        #print(fold_file)
 
         filename = common.get_filename(fold_file)
         language = filename.split('_')[0]
         gender = filename.split('_')[1]
 
-        data = np.load(fold_file)[DATA_KEY]
-        #print("Data Stats: {} {} {} {} {}".format(data.ndim, data.shape, data.size, np.min(data), np.max(data)));
+        #data = np.load(fold_file)[DATA_KEY]
+
+        key, data = next(kaldiio.load_ark(fold_file))
+        print("{}: {} {} {} {} {} ({})".format(fold_file, data.ndim, data.shape, data.size, np.min(data), np.max(data), key));
         
         assert data.shape == input_shape
         assert data.dtype == DATA_TYPE
@@ -161,8 +165,8 @@ if __name__ == "__main__":
 
     # fb
     generate_folds(
-        os.path.join(common.EXPTS_INT, 'test'),
-        '.fb.npz',
+        os.path.join(common.FEATS_DIST, 'test'),
+        '.feats.ark',
         output_dir=os.path.join(common.EXPTS_INT, 'folds'),
         group='test',
         input_shape=(WIDTH, FB_HEIGHT),
@@ -170,8 +174,8 @@ if __name__ == "__main__":
         output_shape=(FB_HEIGHT, WIDTH, COLOR_DEPTH)
     )
     generate_folds(
-        os.path.join(common.EXPTS_INT, 'train'),
-        '.fb.npz',
+        os.path.join(common.FEATS_DIST, 'train'),
+        '.feats.ark',
         output_dir=os.path.join(common.EXPTS_INT, 'folds'),
         group='train',
         input_shape=(WIDTH, FB_HEIGHT),

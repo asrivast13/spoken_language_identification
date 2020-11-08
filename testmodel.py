@@ -144,8 +144,8 @@ def build_model(input_shape):
 if __name__ == "__main__":
     import argparse
 
-    modelFileName = os.path.join(common.EXPTS_INT, 'model/model.h5')
-    foldsFolder   = os.path.join(common.EXPTS_INT, 'folds')
+    modelFileName = os.path.join(common.EXPTS_INT, 'model/testmodel.h5')
+    foldsFolder   = os.path.join(common.EXPTS_INT, 'tmp')
     
     parser = argparse.ArgumentParser(description='Train model.')
     parser.add_argument(
@@ -194,7 +194,7 @@ if __name__ == "__main__":
                 modelFileName,
                 monitor='val_loss',
                 verbose=0,
-                save_best_only=False,
+                save_best_only=True,
                 mode='min')
 
             earlystop = EarlyStopping(
