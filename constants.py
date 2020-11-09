@@ -1,6 +1,6 @@
 SEED = 42
 
-FB_HEIGHT = 52  # filter banks
+FB_HEIGHT = 40  # filter banks
 WIDTH = 998
 COLOR_DEPTH = 1
 INPUT_SHAPE = (FB_HEIGHT, WIDTH, COLOR_DEPTH)
@@ -21,4 +21,4 @@ FRAGMENT_DURATION = 10  # seconds
 DATASET_DIST = 'spoken_language_dataset/build'
 FEATS_DIST   = 'spoken_language_dataset/kaldifeats'
 
-EXPTS_INT = 'spoken_language_dataset/expts/kaldi1'
+EXPTS_INT = 'spoken_language_dataset/expts/kaldi2'

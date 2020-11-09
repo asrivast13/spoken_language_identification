@@ -194,7 +194,7 @@ if __name__ == "__main__":
                 modelFileName,
                 monitor='val_loss',
                 verbose=0,
-                save_best_only=False,
+                save_best_only=True,
                 mode='min')
 
             earlystop = EarlyStopping(

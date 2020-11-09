@@ -71,8 +71,10 @@ def generate_fold(
 
         #data = np.load(fold_file)[DATA_KEY]
 
-        key, data = next(kaldiio.load_ark(fold_file))
-        print("{}: {} {} {} {} {} ({})".format(fold_file, data.ndim, data.shape, data.size, np.min(data), np.max(data), key));
+        key, odata = next(kaldiio.load_ark(fold_file))
+        data = odata[...,3:43]
+        #print("{}: {} {} {} {} {} ({})".format(fold_file, data.ndim, data.shape, data.size, np.min(data), np.max(data), key));
+        print("{}: {} {} ({})".format(fold_file, data.ndim, data.shape, key));
         
         assert data.shape == input_shape
         assert data.dtype == DATA_TYPE
